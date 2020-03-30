@@ -1,0 +1,9 @@
+.pstyling {
+  width: 60%;
+  padding: 1rem;
+  margin: 1rem auto;
+  box-shadow: 2px 2px 7px red;
+  color: #fff;
+  background-color: #333;
+  border-radius: 5px;
+}
