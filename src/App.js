@@ -1,52 +1,37 @@
 import React, { Component } from "react";
 import "./App.css";
-import UserOutput from "./User/UserOutput";
-import UserInput from "./User/UserInput";
 import Person from "./Person/Person";
 
 class App extends Component {
   state = {
     persons: [
-      { name: "Max", age: 28 },
-      { name: "Manu", age: 29 },
-      { name: "Stephanie", age: 26 }
+      { id: "reef", name: "Max", age: 28 },
+      { id: "rfef", name: "Manu", age: 29 },
+      { id: "redf", name: "Stephanie", age: 26 }
     ],
     otherStae: "Some other value",
+    showPersons: false,
     users: [{ userName: "Jerry" }]
   };
 
-  switchNameHandler = newName => {
-    console.log("was clicked");
-    // DON'T DO THIS this.state.persons[0].name = "Karen";
-    this.setState({
-      persons: [
-        { name: newName, age: 28 },
-        { name: "Manu", age: 29 },
-        { name: "Stephanie", age: 27 }
-      ]
-    });
+  nameChangeHandler = (e, id) => {
+    const personIndex = this.state.persons.findIndex(p => p.id === id);
+    const person = { ...this.state.persons[personIndex] };
+    person.name = e.target.value;
+    const persons = [...this.state.persons];
+    persons[personIndex] = person;
+    this.setState({ persons: persons });
   };
 
-  nameChangeHandler = e => {
-    this.setState({
-      persons: [
-        { name: "Max", age: 28 },
-        { name: e.target.value, age: 29 },
-        { name: "Stephanie", age: 27 }
-      ]
-    });
+  deletePersonHandler = personIndex => {
+    const persons = [...this.state.persons];
+    persons.splice(personIndex, 1);
+    this.setState({ persons: persons });
   };
 
-  userChangeHandler = e => {
-    this.setState({
-      persons: [
-        { name: "Max", age: 28 },
-        { name: "Manu", age: 29 },
-        { name: "Stephanie", age: 26 }
-      ],
-      otherStae: "Some other value",
-      users: [{ userName: e.target.value }]
-    });
+  togglePersonsHandler = () => {
+    const doesShow = this.state.showPersons;
+    this.setState({ showPersons: !doesShow });
   };
 
   render() {
@@ -59,48 +44,36 @@ class App extends Component {
       cursor: "pointer"
     };
 
+    let persons = null;
+
+    if (this.state.showPersons) {
+      persons = (
+        <div>
+          {this.state.persons.map((person, index) => {
+            return (
+              <Person
+                key={person.id}
+                changed={e => this.nameChangeHandler(e, person.id)}
+                click={() => this.deletePersonHandler(index)}
+                name={person.name}
+                age={person.age}
+              />
+            );
+          })}
+        </div>
+      );
+    }
+
     return (
       <div className="App">
         <h1>Hi, I'm a react app</h1>
         <p>This is really working!</p>
-        <button
-          style={style}
-          onClick={this.switchNameHandler.bind(this, "Jerry")}
-        >
+        <button style={style} onClick={this.togglePersonsHandler}>
           Switch Name
         </button>
-        <Person
-          name={this.state.persons[0].name}
-          age={this.state.persons[0].age}
-        >
-          I like chicken
-        </Person>
-        <Person
-          click={() => this.switchNameHandler("Tiffany")}
-          name={this.state.persons[1].name}
-          age={this.state.persons[1].age}
-          changed={this.nameChangeHandler}
-        ></Person>
-        <Person
-          name={this.state.persons[2].name}
-          age={this.state.persons[2].age}
-        ></Person>
-
-        <UserInput
-          userName={this.state.users[0].userName}
-          changeUserName={this.userChangeHandler}
-        ></UserInput>
-        <UserOutput userName={this.state.users[0].userName}></UserOutput>
-        <UserOutput userName={this.state.users[0].userName}></UserOutput>
-        <UserOutput userName={this.state.users[0].userName}></UserOutput>
+        {persons}
       </div>
     );
-
-    // React.createElement(
-    //   "div",
-    //   { className: App },
-    //   React.createElement("div", { className: App }, "I'm some h1 text")
-    // );
   }
 }
 
